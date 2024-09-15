@@ -1,0 +1,500 @@
+@import url('https://fonts.googleapis.com/css?family=Open+Sans:300,700|Quattrocento:700');
+
+body {
+    font-family: 'Open Sans', sans-serif;
+    font-weight: lighter;
+    background: white;
+    transition: ease-in-out;
+    opacity: 1;
+    visibility: visible;
+}
+
+@media screen and (prefers-reduced-motion: no-preference) {
+    body.switched {
+        transition: color 0.6s, background-color 0.6s;
+    }
+}
+
+h1,
+h2 {
+    text-align: center;
+    font-family: "Quattrocento", Georgia, 'Times New Roman', Times, serif;
+    color: #e5a32a;
+    margin: 0;
+    padding: 0;
+}
+
+h1 {
+    font-size: 30pt;
+    margin-bottom: 10px;
+}
+
+h2 {
+    font-size: 14pt;
+    font-style: italic;
+    font-family: sans-serif;
+    font-weight: lighter;
+    color: #BBB;
+}
+
+.header {
+    padding-top: 3em;
+    padding-bottom: 3em;
+}
+
+/*
+  Built-in class:
+    # author: Name
+*/
+.byline {
+    font-style: italic;
+}
+
+.written-in-ink {
+    z-index: 3;
+    font-size: 9pt;
+    font-family: sans-serif;
+    text-align: center;
+    font-weight: 700;
+    position: fixed;
+    display: block;
+    width: 100%;
+    background: white;
+    margin: 0;
+    padding-top: 6px;
+    padding-bottom: 6px;
+    height: 14px;
+    top: 0;
+}
+
+@media screen and (prefers-reduced-motion: no-preference) {
+    .written-in-ink {
+        transition: color black;
+    }
+}
+
+/* 
+  Enables <iframe> support work on itch.io when using mobile iOS
+*/
+.outerContainer {
+    position: absolute;
+    display: block;
+    margin: 0;
+    padding: 0;
+    -webkit-overflow-scrolling: touch;
+    overflow: scroll;
+    overflow-x: hidden;
+    height: 100%;
+    width: 100%;
+    top: 0;
+    left: 0;
+    margin-top: 24px;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    transition: background-image 0.5s ease-out;
+}
+
+@media screen and (max-width: 980px) {
+    .outerContainer {
+        margin-top: 44px;
+        background-size: cover;
+        background-repeat: no-repeat;
+    }
+}
+
+.container {
+    display: block;
+    max-width: 600px;
+    padding: 20px;
+    margin: 0 auto;
+    padding-top: 2.4em;
+    padding-bottom: 5em;
+    transform-origin: center center;
+    opacity: 1;
+    visibility: visible;
+    background: rgba(0,0,0,0.5);
+    min-height: 100vh;
+    box-sizing: border-box;
+}
+
+@media screen and (prefers-reduced-motion: no-preference) {
+    .switched .container {
+        transition: background-color 0.6s;
+    }
+}
+
+p {
+    font-size: 13pt;
+    color: #d6d6d6;
+    line-height: 1.7em;
+    font-weight: lighter;
+}
+
+a {
+    font-weight: 700;
+    color: #b97c2c;
+    font-family: sans-serif;
+    text-decoration: none;
+}
+
+.unclickable {
+    font-weight: 700;
+    color: #4f3411;
+    font-family: sans-serif;
+    text-decoration: none;
+    cursor: not-allowed;
+}
+
+a:hover {
+    color: rgba(0,0,0,0.5);
+}
+
+@media screen and (prefers-reduced-motion: no-preference) {
+    a {
+        transition: color 0.6s;
+    }
+
+    a:hover {
+        transition: color 0.1s;
+    }
+}
+
+strong {
+    color: black;
+    font-weight: bold;
+}
+
+img {
+    display: block;
+    margin: 0 auto;
+    max-width: 100%;
+}
+
+.container .hide {
+    opacity: 0.0;
+}
+
+.container .invisible {
+    display: none;
+}
+
+.container>* {
+    opacity: 1.0;
+}
+
+@media screen and (prefers-reduced-motion: no-preference) {
+    .container>* {
+        transition: opacity 1.0s;
+    }
+}
+
+/*
+  Class applied to all choices
+  (Will always appear inside <p> element by default.)
+*/
+.choice {
+    text-align: center;
+    line-height: 1.5em;
+    font-style: italic;
+}
+
+/* 
+  Class applied to first choice
+*/
+:not(.choice)+.choice {
+    padding-top: 1em;
+}
+
+/*
+  Class applied to choice links
+*/
+.choice a, .choice span {
+    font-size: 13pt;
+}
+.choice a::before {
+    content:"●";
+    color:white;
+    margin-right: 10px;
+    font-size: 1.2em;
+    vertical-align: 0.05em;
+    font-style: normal;
+}
+
+/* 
+  Built-in class:
+    The End # CLASS: end
+*/
+.end {
+    text-align: center;
+    font-weight: normal;
+    color: black;
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+
+#controls {
+    z-index: 4;
+    font-size: 9pt;
+    text-align: center;
+    padding-bottom: 6px;
+    position: fixed;
+    right: 14px;
+    top: 4px;
+    user-select: none;
+    background: white;
+}
+
+@media screen and (prefers-reduced-motion: no-preference) {
+    #controls {
+        transition: color 0.6s, background 0.6s;
+    }
+}
+
+#controls [disabled] {
+    color: #ccc;
+}
+
+#controls>*:not(:last-child):after {
+    content: " | ";
+}
+
+@media screen and (max-width: 980px) {
+    #controls {
+        z-index: 2;
+        padding-top: 24px;
+        top: 0;
+        left: 0;
+        right: 0;
+    }
+}
+
+/* 
+  Dark Theme (Added in Inky 0.10.0)
+    # theme: dark
+*/
+
+body.dark {
+    color: white;
+}
+
+.dark h2 {
+    color: #666;
+}
+
+.dark .container {
+    background: rgba(0, 0, 0, 0.8);
+}
+
+.dark .written-in-ink {
+    background: black;
+}
+
+.dark a {
+    color: #cc8f1a;
+}
+.dark .unclickable{
+    color: #c4af87;
+    cursor:not-allowed;
+}
+
+.dark a:hover {
+    color: white;
+}
+
+@media screen and (prefers-reduced-motion: no-preference) {
+    .dark a {
+        transition: color 0.6s;
+    }
+}
+
+.dark strong {
+    color: white;
+}
+
+.dark #controls [disabled] {
+    color: #444;
+}
+
+.dark .end {
+    color: white;
+}
+
+.dark #controls {
+    background: black;
+}
+/* Cache le conteneur de l'histoire lorsque la classe 'hide-story' est présente sur le body */
+.hide-story #story {
+    opacity: 0;
+}
+.no-italic {
+    font-style: normal; /* Retire l'italique */
+}
+
+/* Styles pour le conteneur principal */
+.main-content {
+    display: flex;
+    align-items: flex-start; /* Aligne les éléments en haut */
+    justify-content: center; /* Centre horizontalement le contenu */
+    margin-top: 20px; /* Marge supérieure si nécessaire */
+}
+
+/* Ajustement du conteneur de l'histoire */
+#story.container {
+    width: 66%;
+    box-sizing: border-box;
+}
+
+/* Styles pour la fiche de personnage */
+#character-sheet {
+    position:sticky;
+    top:20px;
+    width: 30%;
+    max-width: 320px;
+    box-sizing: border-box;
+    max-height: 80vh; /* 60% de la hauteur de la fenêtre */
+    margin-left: 20px; /* Espace entre l'histoire et la fiche */
+    background: rgba(0, 0, 0, 0.7); /* Même fond que le conteneur de l'histoire */
+    padding-left: 0px;
+    padding-right:20px;
+    margin-right: 400px;
+    color: #d6d6d6;
+    font-size: 13pt;
+    font-weight: lighter;
+    line-height: 1.7em;
+    border-radius: 8px; /* Coins arrondis optionnels */
+}
+
+/* Style pour le titre de la fiche de personnage */
+#character-sheet h2,
+#character-sheet h3 {
+    text-align: center;
+    font-size: 14pt;
+    font-style: normal;
+    font-weight: bold;
+    color: #e5a32a;
+    margin-bottom: 10px;
+}
+#character-sheet h3 {
+    margin-top:10px;
+}
+
+/* Style pour les champs de la fiche */
+#character-sheet p {
+    margin: 5px 0;
+}
+
+#character-sheet strong {
+    color: #e5a32a;
+    font-size: 14pt;
+    font-weight:lighter;
+    margin-left: 20px;
+}
+
+/* Ajustements pour les écrans plus petits */
+@media screen and (max-width: 980px) {
+    .main-content {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    #story.container, #character-sheet {
+        width: 90%;
+        margin: 0 auto;
+    }
+
+    #character-sheet {
+        margin-top: 20px;
+    }
+}
+
+/* Style pour le séparateur */
+#character-sheet hr {
+    border: 0;
+    border-top: 1px solid #e5a32a;
+    margin: 10px 0;
+    margin-left: 20px;
+}
+
+/* Styles pour l'inventaire */
+#character-sheet ul {
+    list-style-type: disc;
+    margin-left: 20px;
+}
+
+#character-sheet li {
+    margin: 5px 0;
+}
+#inventory-list {
+    display: grid;
+    grid-template-columns: 1; /* Une seule colonne */
+    grid-auto-rows: minmax(30px, auto); /* Réduit la hauteur minimale des cellules */
+    max-height: 300px; /* Hauteur maximale pour l'inventaire */
+    padding: 0; /* Supprime tout padding interne */
+    gap: 1px; /* Supprime tout espace entre les lignes */
+    background: rgba(255, 255, 255, 0.1); /* Fond léger pour séparer visuellement */
+    border: 1px solid #e5a32a; /* Bordure autour de l'inventaire */
+    margin-left:0;
+    margin-right: auto;;
+}
+
+#inventory-list li {
+    display: flex;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.2);
+    color: #d6d6d6;
+    font-size: 14px;
+    font-weight: lighter;
+    margin: 0; /* Supprime toute marge externe */
+    padding: 0; /* Supprime tout padding interne */
+    line-height: 1; /* Réduit la hauteur de ligne pour minimiser l'écart */
+}
+
+#inventory-list li::before {
+    content: "•"; /* Puce pour chaque élément */
+    margin-right: 5px;
+    margin-left: 5px;
+    color: #e5a32a; /* Couleur de la puce */
+    font-size: 16pt;
+    line-height: 1; /* Aligne la puce avec le texte */
+}
+/* Container du tooltip */
+.tooltip-container {
+    position: relative;
+    display: block;
+    cursor: pointer;
+    z-index: 1;
+}
+
+/* Style du tooltip caché */
+.tooltip-container .tooltip-text {
+    visibility: hidden;
+    background-color: rgba(0, 0, 0, 0.8);
+    color: #fff;
+    text-align: center;
+    border-radius: 5px;
+    padding: 5px;
+    position: absolute; /* Passe à absolute pour tester */
+    z-index: 9999; /* Toujours au-dessus */
+    bottom: 150%; /* Positionné plus haut que l'élément */
+    left: 50%;
+    transform: translateX(-50%);
+    width: 200px;
+}
+
+/* Flèche du tooltip */
+.tooltip-container .tooltip-text::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 5px;
+    border-style: solid;
+    border-color: rgba(0, 0, 0, 0.8) transparent transparent transparent;
+}
+
+/* Afficher le tooltip */
+.tooltip-container:hover .tooltip-text {
+    visibility: visible;
+}

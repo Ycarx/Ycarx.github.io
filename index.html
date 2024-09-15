@@ -1,0 +1,67 @@
+﻿<!doctype html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8">
+
+    <title>Chroniques du Magellus</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+
+    <div class="outerContainer">
+        <h3 class="written-in-ink"><a href="https://www.inklestudios.com/ink">WRITTEN IN INK</a></h3>
+
+        <div id="controls" class="buttons">
+          <a id="rewind" title="Restart story from beginning">restart</a>
+          <a id="save" title="Save progress">save</a>
+          <a id="reload" title="Reload from save point">load</a>
+          <a id="theme-switch" title="Switch theme">theme</a>
+          <a id="toggle-story" title="Hide/Show Story">hide story</a>
+        </div>
+
+        <!-- Nouvelle div pour le contenu principal -->
+        <div class="main-content">
+            <div id="story" class="container">
+                <div class="header">
+                    <h1>Chroniques du Magellus</h1>
+                    <h2 class="byline"></h2>
+                </div>
+            </div>
+
+            <!-- Nouvelle div pour la fiche de personnage -->
+            <div id="character-sheet">
+            <h2>Fiche de Personnage</h2>
+            <p><strong>Nom :</strong> <span id="char-name"></span></p>
+            <p><strong>Classe :</strong> <span id="char-class">[Classe du personnage]</span></p>
+            <p><strong>Niveau :</strong> <span id="char-level">[Niveau]</span></p>
+            <p><strong>Force :</strong> <span id="char-strength">[Stat]</span></p>
+            <p><strong>Dextérité :</strong> <span id="char-dexterity">[Stat]</span></p>
+            <p><strong>Constitution :</strong> <span id="char-constitution">[Stat]</span></p>
+            <p><strong>Intelligence :</strong> <span id="char-intelligence">[Stat]</span></p>
+            <p><strong>Charisme :</strong> <span id="char-charisma">[Stat]</span></p>
+
+            <!-- Séparateur visuel -->
+            <hr>
+
+            <!-- Inventaire -->
+            <h3>Inventaire</h3>
+            <ul id="inventory-list">
+            <!-- Les éléments de l'inventaire seront ajoutés ici -->
+            </ul>
+</div>
+
+        </div>
+
+    </div>
+
+    <script src="ink.js"></script>
+    <script src="objects.js"></script>
+    <script src="master.js"></script>
+    <script src="main.js"></script>
+</body>
+</html>
