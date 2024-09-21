@@ -1,12 +1,15 @@
 @import url('https://fonts.googleapis.com/css?family=Open+Sans:300,700|Quattrocento:700');
 
-body {
+html,body {
+    background-color: #000000;
     font-family: 'Open Sans', sans-serif;
     font-weight: lighter;
     background: white;
     transition: ease-in-out;
     opacity: 1;
     visibility: visible;
+    height:100%;
+    overflow: hidden;
 }
 
 @media screen and (prefers-reduced-motion: no-preference) {
@@ -95,6 +98,7 @@ h2 {
     transition: background-image 0.5s ease-out;
 }
 
+
 @media screen and (max-width: 980px) {
     .outerContainer {
         margin-top: 44px;
@@ -116,6 +120,7 @@ h2 {
     background: rgba(0,0,0,0.5);
     min-height: 100vh;
     box-sizing: border-box;
+    
 }
 
 @media screen and (prefers-reduced-motion: no-preference) {
@@ -129,6 +134,7 @@ p {
     color: #d6d6d6;
     line-height: 1.7em;
     font-weight: lighter;
+    
 }
 
 a {
@@ -338,11 +344,11 @@ body.dark {
     justify-content: center; /* Centre horizontalement le contenu */
     margin-top: 20px; /* Marge supérieure si nécessaire */
 }
-
 /* Ajustement du conteneur de l'histoire */
 #story.container {
     width: 66%;
     box-sizing: border-box;
+    position:relative;
 }
 
 /* Styles pour la fiche de personnage */
@@ -433,7 +439,8 @@ body.dark {
     padding: 0; /* Supprime tout padding interne */
     gap: 1px; /* Supprime tout espace entre les lignes */
     background: rgba(255, 255, 255, 0.1); /* Fond léger pour séparer visuellement */
-    border: 1px solid #e5a32a; /* Bordure autour de l'inventaire */
+    border:0;
+    border-top: 1px solid #e5a32a; /* Bordure autour de l'inventaire */
     margin-left:0;
     margin-right: auto;;
 }
@@ -497,4 +504,10 @@ body.dark {
 /* Afficher le tooltip */
 .tooltip-container:hover .tooltip-text {
     visibility: visible;
+}
+.story-separator {
+    height: 1px;
+    background: linear-gradient(to right, rgba(0, 0, 0, 0.01), #e5a32a, rgba(0, 0, 0, 0.01));
+    margin: 20px 0;
+    border: none;
 }

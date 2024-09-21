@@ -56,6 +56,18 @@
         var delay = 0.0;
         //custom code
         //const currentBackground = story.variablesState["background"];
+        // Add separator when the story continues (not the first time)
+    if (!firstTime) {
+
+         // Supprimer l'ancien séparateur
+    var existingSeparator = document.querySelector('.story-separator');
+    if (existingSeparator) {
+        existingSeparator.remove();
+    }
+        var separatorElement = document.createElement('hr'); // Create a horizontal line
+        separatorElement.classList.add("story-separator"); // Optional: Add class for custom styling
+        storyContainer.appendChild(separatorElement);
+    }
 
 
         //custom code
