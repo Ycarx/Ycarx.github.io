@@ -1,5 +1,6 @@
 VAR intro_bureau_seen=0
 === intro_bureau ===
+~background= "IMAGES/intro/office.png"
 {intro_bureau_seen==0: L'architecture onirique se poursuit dans ce qui se trouve être un bureau bâti à même la pierre. Une grande pièce, bien trop grande. La personne qui l'occupe doit forcément être quelqu'un de très important. Le vent à cette hauteur souffle avec force et fait battre les bannières à tête de tigre écaillé contre la roche d'arches qui s'ouvrent sur les entrailles d'une cité resplendissante de couleur pâles.<br>Au milieu de la pièce, un autre homme en armure, mais celle-ci est bien plus cérémoniale. Ce quelqu'un d'important est sans aucun doute juste devant vous. Sans heaume, il vous dévisage avec le même air sec et méprisant des deux autres. Lui semble plus vil. On dirait que lui <i>vous en veut à vous</i>.}
 * "Quelqu'un veut bien me dire ce que je fais ici?"[]\
 ->intro_bureau.langage
@@ -37,6 +38,7 @@ L'écho de votre voix {fuite_echec:fébrile} tape contre les parois rocheuses du
 *[Attendre qu'il vous porte une attaque]Trop long. Votre bref instant d'hésitation suffit pour que l'homme derrière vous vous porte un violent coup au crâne. Vous vous sentez partir. La lumière s'éteint.->intro_infirmerie
 *[Plonger entre ses jambes]Vous plongez entre les jambes du garde pour échapper à sa prise et vous relevez en titubant. Vous vous jetez au travers de la porte. Vous échappez de justesse à l'homme qui gardait la porte et courez tout droit, sans savoir quoi faire, ni où aller.->intro_bureau.fuite_suite
 =fuite_suite
+~background = "IMAGES/intro/corridor.png"
 * [Enjamber les arches et sauter dans le vide] Vous vous approchez dangereusement des arches. Pas de cours d'eau en contrebas. Pas d'accroche. Un gouffre qui vous tuera à coup sûr.
     * * [Enjamber les arches et sauter dans le vide] Vous enjambez la barrière de pierre et vous tenez encore au pilier qui forme l'arche au-dessus de votre tête. Vous êtes pris de vertige. Vous entendez les gardes qui se rapprochent et s'arrêtent net à quelques pas de vous, attendant avec précaution votre prochaine décision.
         * * *[Reprendre vos esprits et remonter prudemment dans le couloir]
@@ -83,6 +85,7 @@ Vous reprenez vos esprits et remontez prudemment dans le couloir. Les gardes son
 //--------ARC 01----SOUVENIR--------
 //----------------------------------
 === intro_infirmerie
+~ background= "IMAGES/intro/apothecary1.png"
 <br><br>
 *...
 <br><br>
