@@ -1,0 +1,1 @@
+VAR background = "IMAGES/intro/cachot.png"
