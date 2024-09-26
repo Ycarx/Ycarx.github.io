@@ -1,6 +1,11 @@
 // L'histoire commence
 === intro_wakeup ===
 Vous ouvrez les yeux avec difficulté et sentez le goût de la poussière envahir votre bouche. Vous êtes épuisé, mais ne vous souvenez pas de ce qui vous est arrivé. Vos mains sont liées par de lourds bracelets de fer. Votre corps est endolori. Le son du métal frappé vous étourdit à peine éveillé. L'odeur de la sueur et de la crasse envahit votre nez. Que faites vous ici ?
+//DEBUG --- REMOVE --- DEBUG --- REMOVE --- DEBUG --- REMOVE --- DEBUG --- REMOVE --- 
+//DEBUG --- REMOVE --- DEBUG --- REMOVE --- DEBUG --- REMOVE --- DEBUG --- REMOVE --- 
+    * [DEBUG] ->debug
+//DEBUG --- REMOVE --- DEBUG --- REMOVE --- DEBUG --- REMOVE --- DEBUG --- REMOVE --- 
+//DEBUG --- REMOVE --- DEBUG --- REMOVE --- DEBUG --- REMOVE --- DEBUG --- REMOVE --- 
     * [Regarder autour de vous] <>
     * [Crier à l'aide] Vous êtes pris d'une toux qui vous musèle, et vous fait cracher une gerbe de terre.
     - Vous frottez vos yeux péniblement pour chasser le sable de vos paupières et découvrez que vous êtes dans une prison. Peut-être davantage un cachot. 

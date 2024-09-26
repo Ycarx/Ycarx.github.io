@@ -8,6 +8,8 @@ INCLUDE karma.ink
 INCLUDE intro_wakeup.ink
 INCLUDE intro_cachot.ink
 INCLUDE intro_bureau.ink
+INCLUDE debug.ink
+
 
 
 

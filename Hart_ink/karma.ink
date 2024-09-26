@@ -10,4 +10,5 @@ Un prsonnage au karma de 50 est un ami.
 
 VAR intro_parangon_patience=0 // Patience du parangon au début de l'histoire
 VAR karma_Mangruv = -40 // Dor Mangruv
+VAR karma_Eulaee = 0 //Eulaée
 

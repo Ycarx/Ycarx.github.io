@@ -27,9 +27,9 @@ Tout se passe soudainement très vite. {intro_bureau02:Il|Le plus proche de vous
 
 = fuite_echec
 Le chef des deux vous attrape violemment et vous soulève d'une main. Il semble terriblement plus fort que les deux autres. Vous ne vous comprenez pas, mais le langage est inutile. Vous êtes fatigué, perdu, abattu. Vous savez bien que vous n'êtes pas en point de vous enfuir, et vous avez empiré votre situation.
-*"Mais qu'est-ce que vous me voulez?"
-*"Mais qu'est-ce que je fais là?"
-*[Vous débattre.] "Laissez-moi!"
+    *"Mais qu'est-ce que vous me voulez?"[]
+    *"Mais qu'est-ce que je fais là?"[]
+    *[Vous débattre.] "Laissez-moi!"
 - Aucune réponse. Il vous laisse tomber comme un sac et vous vous écroulez, épuisé.->intro_bureau03
 = langage
 L'écho de votre voix {fuite_echec:fébrile} tape contre les parois rocheuses du bureau de l'homme qui vous fait face. Votre nouvel interlocuteur plisse les yeux en vous écoutant, dans l'incompréhension. Il {fuite_echec:vous lâche pour vous laisser tomber sur le sol, et} s'adresse au garde derrière vous avec un ton qui vous semble de toute évidence signifier qu'il ne comprend rien non plus à ce que vous dites. Ils échangent alors quelques mots, et l'autre garde s'éclipse promptement de la pièce. ->intro_bureau02
@@ -64,13 +64,12 @@ L'écho de votre voix {fuite_echec:fébrile} tape contre les parois rocheuses du
 Soudain, vous tombez nez-à-nez avec {intro_bureau.langage:le garde qui était parti alors qu'il sort du chemin de droite. Il tient dans ses mains un lourd disque de pierre avec un trou au milieu. Des runes sont gravées tout le long de sa surface.|un énième clone en armure flamboyante, qui remontait du cachot.} Il fait un pas de recul, et vous devinez ce qu'il se demande. "Qu'est-ce qu'il se passe?"<br>Vous vous sentez déstabilisé.<br>Ce bref instant d'hésitation suffit pour que les gardes derrière vous vous rattrapent. L'un d'eux vous frappe alors violemment au crâne. Vous vous sentez partir. La lumière s'éteint.->intro_infirmerie
 
 ===intro_bureau02
-* "Où est-ce qu'il est parti?"[] Vous demandez aussitôt.
-Vos paroles restent évidemment sans réponse. ->intro_bureau03
+* "Où est-ce qu'il est parti?"[] Vous demandez aussitôt.<br>Vos paroles restent évidemment sans réponse. ->intro_bureau03
 * [Attendre]->intro_bureau03
 * {not intro_bureau.fuite} [Attendre un peu puis tenter de fuir par la porte d'où vous êtes entré]Vous tentez de vous jeter dehors à la surprise du seul garde restant. -> intro_bureau.fuite
 === reprendre_esprits_arches
 Vous reprenez vos esprits et remontez prudemment dans le couloir. Les gardes sont regroupés autour de vous. Ils vous menaceraient bien avec leurs armes, mais vous êtes inoffensif à leurs yeux. Ils s'écartent pour laisser passer leur chef, qui dévisse alors son lourd gantelet de métal pour libérer sa main nue, cerclée d'un magnifique bracelet sobre d'une nuance métallique iridescente. Il lève sa main lentement et la regarde, vous invitant à faire de même. 
-             * * * *["Discutons en adultes, voulez-vous? J'ai changé d'avis."]
+             * * * *"Discutons en adultes, voulez-vous? J'ai changé d'avis."[]
              * * * *[Fixer sa main]
                     - Il fait alors une légère grimace méprisante et vous envoie une puissante mandale qui vous envoie directement au pays des rêves. ->intro_infirmerie
 === intro_bureau03
@@ -103,86 +102,135 @@ VAR infirmerie_vue =1
 ~ infirmerie_vue+=1
 -> intro_infirmerie02
 
-* (reve) "C'était quoi, un rêve?"[]<br>"Un rêve? Oh, j'ai bien peur que non, monsieur. {suicide_arches:Vous nous avez fait très peur, vous savez. D'abord vous tombez du ciel, et ensuite vous menacez de vous tuer... Personne n'y a rien compris.|Le monde vous a vu tomber du ciel.} C'est incroyable que vous soyez toujours vivant. 
+* (reve) {infirmerie_vue==1} "C'était quoi, un rêve?"[]
+"Un rêve? Oh, j'ai bien peur que non, monsieur. {suicide_arches:Vous nous avez fait très peur, vous savez. D'abord vous débarquez comme ça, et ensuite vous menacez de vous tuer... Personne n'y a rien compris.} C'est incroyable que vous soyez toujours vivant." Elle se penche légèrement sur vous et joint ses mains, attentive.
 ~ infirmerie_vue+=1
 -> intro_infirmerie02
-* (frichelangue)"Comment se fait-il que je vous comprenne?"[]<br>"La Pierre de Frichelangue. C'est un vieil artefact qui n'a pas servi depuis très longtemps. Il faut aller chercher vraiment très loin pour trouver des gens qui ne parlent pas le Ségur."
+* (frichelangue)"Comment se fait-il que je vous comprenne?"[]
+"La Pierre de Frichelangue", dit-elle, consciencieuse. "C'est un vieil artefact qui n'a pas servi depuis très longtemps. Il faut aller chercher vraiment très loin pour trouver des gens qui ne parlent pas le Ségur."
 ~ infirmerie_vue+=1
 ->intro_infirmerie02
-* (eulaee) {intro_infirmerie>=1} "Qui êtes-vous?"[]<br>"Je m'appelle Eulaée. On m'a chargée de bander vos blessures. Ça risque de prendre encore un peu de temps pour vous soigner, les apothicaires refusent qu'on vous donne de l'onguent. Et vous, c'est quoi votre nom?"
-    * * (nom)["Magellus Kant."] Vous baissez les yeux machinalement pour regarder votre insigne, mais vous êtes alité, torse nu, et couvert de bandage.<br>"Magellus Kant", lui dites-vous simplement.<br>"C'est un joli nom. Il vous va très bien: inconnu et mystérieux."
-    * * "Je l'ai oublié."[]<br>La jeune femme marque une pose à ces paroles. Elle a l'air soucieuse, et se mord la lèvre.<br>"Vous devez essayer de vous souvenir de quelque chose, je vous en prie. Si vous n'avez rien à lui dire, il vous tuera."
+* (eulaee) "Qui êtes-vous?"[]
+"Je m'appelle Eulaée. On m'a chargée de bander vos blessures. Ça risque de prendre encore un peu de temps pour vous soigner, les apothicaires refusent qu'on vous donne de l'onguent. Et vous, c'est quoi votre nom?"
+    * * (nom)"Magellus Kant."[]
+    Vous baissez les yeux machinalement pour regarder votre insigne, mais vous êtes alité, torse nu, et couvert de bandage.<br>"Magellus Kant", lui dites-vous simplement.<br>"C'est un joli nom. Il vous va très bien: inconnu et mystérieux."
+    * * "Je l'ai oublié."[]
+    ~karma_Eulaee-=1
+    La jeune femme marque une pause à ces paroles. Elle a l'air soucieuse, et se mord la lèvre.<br>"Vous devez essayer de vous souvenir de quelque chose, je vous en prie. Si vous n'avez rien à lui dire, il vous tuera."
         * * *(direnom) "Magellus. Je m'appelle Magellus. Je vous ai menti."[]
-        * * *"Qui me tuera?"[]<br>"Dor Mangruv. Vous l'avez rencontré, là haut."
-            * * * *(direnom2)"J'ai menti. Je m'appelle Magellus Kant."[]<br>Eulaée plisse les yeux en soupirant.<br>"C'est un joli nom. Il vous va très bien: inconnu et mystérieux."
+            "Voilà qui est rassurant."<br>Elle se contente en hochant la tête, le regard légèrement perdu dans le vide. Elle réflechit.
+        * * *"Qui me tuera?"[]
+        "Dor Mangruv. Vous l'avez rencontré, là haut."
+            * * * *(direnom2)"J'ai menti. Je m'appelle Magellus Kant."[]
+            Eulaée plisse les yeux en soupirant.<br>"C'est un joli nom. Il vous va très bien: inconnu et mystérieux."
+    - -
+    * *"Votre prénom à vous est très original"[]
+    ~karma_Eulaee+=5
+    "Vous êtes gentil", dit-elle en vous offrant un sourire réservé.<br>"C'est d'origine Sen. Très au sud du pays. Des terres magnifiques."
+    * *(vexee)"Le votre ne me dit rien qui vaille."[]
+    ~karma_Eulaee-=3
+    "En tous cas, il est porté par des mains qui vous soignent", vous rétorque-t-elle, vexée. "Depuis des jours, je suis à votre chevet et je vous panse."
+    * *[Poursuivre]
     - -
     ~ infirmerie_vue+=1
     ->intro_infirmerie02
-            
-* {frichelangue} "{infirmerie_vue>3:Je n'ai rien compris à ce que vous aviez dit, à propos de...|Je ne comprends rien à ce que vous dites. }Frichelangue? Ségur?"[]<br>"Vous savez, les rumeurs à votre sujet sont déjà nombreuses dans la ville", vous répond-elle. "Tout le monde veut savoir d'où vient le Perceciel."
+* {vexee and TURNS_SINCE(->intro_infirmerie02.vexee)<1} [Vous excuser] "Pardonnez-moi, je ne voulais pas vous blesser", vous rattrapez-vous avec une légère maladresse. Eulaée vous esquisse un sourire réservé.<br>"Ce n'est rien. Vous devez être un peu perdu."
+~karma_Eulaee+=2
+->intro_infirmerie02
+* {frichelangue} "{infirmerie_vue>3:Je n'ai rien compris à ce que vous aviez dit, à propos de...|Je ne comprends rien à ce que vous dites. }Frichelangue? Ségur?"[]
+"Vous savez, les rumeurs à votre sujet sont déjà nombreuses dans la ville", vous répond-elle. "Tout le monde veut savoir d'où vient le Perceciel."
     * *"Le... quoi?"[]
     * *"Je suis complètement perdu."[]
-    - - <><br>"Je suis désolée, je suis en train vous inonder d'informations. Cela doit être difficile. Le Perceciel, c'est vous. Vous avez littéralement fendu les cieux, avant de, et bien... vous... écraser?"
-        * * * (motif) "Poursuivez, s'il-vous-plaît."[]<br>"Poursuivre? Ma foi, je ne sais pas... J'ai entendu dire que vous aviez aterri sur un convoi d'émissaires très important à la porte de Vervallée. Presque tous les astradari sont morts, vous les avez aplatis!" Elle glousse avec retenue.{soeurs: Ce qui vous étonne, au regard de sa profession.}<br>"Mais ça risque fortement d'empirer la situation, avec Astradara. Ils croient que c'est une attaque venant de chez nous. Et les parangons, eux... Ils pensent que vous êtes astradari, mais que leur attaque a merdé."<br>Elle regarde dans le vide et tire une moue perplexe.<br>"Moi, je crois que vous êtes bien plus que ça."
+    - -
+    "Je suis désolée, je suis en train vous inonder d'informations. Cela doit être difficile. Le Perceciel, c'est vous."
+        * * * (motif) "Poursuivez, s'il-vous-plaît."[]
+        "Poursuivre? Ma foi, je ne sais pas... J'ai entendu dire que vous aviez aterri sur un convoi d'émissaires très important à la porte de Vervallée. Presque tous les astradari sont morts, vous les avez aplatis!" Elle glousse avec retenue.{soeurs: Ce qui vous étonne, au regard de sa profession.}<br>"Mais ça risque fortement d'empirer la situation, avec Astradara. Ils croient que c'est une attaque venant de chez nous. Et les parangons, eux... Ils pensent que vous êtes astradari, mais que leur attaque a merdé."<br>Elle regarde dans le vide et tire une moue perplexe.<br>"Moi, je crois que vous êtes bien plus que ça."
         ~ infirmerie_vue+=1
         ->intro_infirmerie02
-* {reve and infirmerie_vue > 4 and motif} "Attendez, je suis tombé du ciel? Qu'est-ce que vous racontez?"[]<br>"Vous ne vous souvenez vraiment de rien, alors?" Elle semble déçue.<br>"Pas même la moindre chose?"
+* {motif} "Attendez, je suis tombé du ciel? Qu'est-ce que vous racontez?"[]
+"Vous ne vous souvenez vraiment de rien, alors?" Elle semble déçue.<br>"Pas même la moindre chose?"
     * *"Je me souviens[..."]->donne_souvenir
     * *"Je n'ai pas envie de vous en dire plus."[]->refus
     * *"Rien du tout, j'en suis navré."[]
     * *"Tout est vraiment flou..."[]
-    - - "Je vois." Dit-elle, pensive. "Peut-être... Peut-être que je pourrais vous donner quelque chose qui vous aide à vous souvenir. Vous seriez d'accord?"
-        * * *"C'est d'accord."[]->accepte
-        * * *"Non, je refuse."[]->refus
-* {motif} "Comment ça, je suis 'plus que ça?'"[]<br>"Oui. Vous êtes tombé du ciel, enfin! C'est Selvaràn qui vous envoie. J'en suis sûre. Pourquoi? Je l'ignore, mais pour une bonne raison, c'est certain. Arriver là-bas, à ce moment là, ça ne peut pas être une coïncidence."
+    - - 
+    "Je vois." Dit-elle, pensive. "Peut-être... Peut-être que je pourrais vous donner quelque chose qui vous aide à vous souvenir. Vous seriez d'accord?"
+        * * *[Accepter]"C'est d'accord."->accepte
+        * * *[Refuser]"Non, je refuse."->refus
+* {motif} "Comment ça, je suis 'plus que ça?' "[]<br>"Oui. Vous êtes tombé du ciel, enfin! C'est Selvaràn qui vous envoie. J'en suis sûre. Pourquoi? Je l'ignore, mais pour une bonne raison, c'est certain. Arriver là-bas, à ce moment là, ça ne peut pas être une coïncidence."
 ~ infirmerie_vue+=1
 ->intro_infirmerie02
-* {motif} "Qui sont les parangons?"[]<br>"Les parangons sont la classe martiale de Dor. Une élite militaire armée d'artefacts et membres d'une caste sévère. Ils ont une autorité presque suprême en Esquipio. Dor Mangruv, vous avez eu... 'la chance' de le rencontrer. C'est lui qui est à leur tête."
+* {motif} ["Qui sont les parangons?"]
+"Les parangons sont la classe martiale de Dor. Une élite militaire armée d'artefacts et membres d'une caste sévère. Ils ont une autorité presque suprême en Esquipio. Dor Mangruv, vous avez eu... 'la chance' de le rencontrer. C'est lui qui est à leur tête."
 ~ infirmerie_vue+=1
 ->intro_infirmerie02
+
+
 =donne_souvenir
 *{intro_wakeup.abalon_info_remember.livre} <i>(souvenir d'un livre)</i>...de mon codex. Un ouvrage qui contient, je crois, tout ce que j'ai appris étant plus jeune.->intro_infirmerie02.livre_effort
 * {intro_wakeup.abalon_info_remember.effort} <i>(souvenir d'un effort)</i>...de mon entraînement. J'étais un soldat, je crois.->intro_infirmerie02.livre_effort
 * {intro_wakeup.abalon_info_remember.conversation}  <i>(souvenir d'une conversation)</i>...d'une conversation avec quelqu'un. J'étais un navigateur, je crois. J'allais quelque part. -->intro_infirmerie02.conversation
+
 =accepte
-"Loué soit Carimdel!" soupire-t-elle, soulagée.->creuser_souvenir
+"Loué soit Carimdel!" soupire-t-elle, soulagée.
+~karma_Eulaee+=5
+->creuser_souvenir
+
 =refus
+~karma_Eulaee-=2
 <br>"Monsieur{nom or direnom or direnom2: Magellus}, aidez-moi à vous aider, s'il-vous plaît. Non, en fait, aidez-moi, tout simplement. Ils attendent de moi que je leur serve des informations à votre sujet. Croyez-moi, les parangons ne tiennent pas la culture de l'échec en affection."
-* "D'accord. Je me souviens..."->donne_souvenir
-* "Je suis navré, c'est non."->refus2
+* "D'accord. Je me souviens..."[]
+~karma_Eulaee+=1
+->donne_souvenir
+* "Je suis navré, c'est non."[]
+~karma_Eulaee-=5
+->refus2
+
 =refus2
 <br>Eulaée ne cache pas une soudaine et grande déception. Elle semble blessée. Votre refus de vous ouvrir démontre d'une grande prudence, mais il la met dans une position délicate de laquelle elle ne peut pas se soustraire.
 "Je... Je suis désolée, monsieur{nom or direnom or direnom2: Magellus}, ils ne me laissent pas le choix", dit-elle, d'un ton sincèrement triste. ->creuser_souvenir
+
 =livre_effort
 <br>"Si vous êtes arrivé ici avec des objets, c'est sans nul doute qu'ils sont en possession d'Astradara, maintenant. ->gather
+
 =conversation
 <br>"Un navigateur, très certainement. ce que vous avez laissé derrière vous, les parangons l'ont décrit comme... un petit navire fait de métal. ->gather
+
 =gather
 C'est une information précieuse. Respirez fortement, nous allons essayer de creuser un peu plus loin dans votre histoire..."->creuser_souvenir
+
 =creuser_souvenir
 <br>Elle sort alors une gemme noire, parfaitement polie et sphérique de son tablier, et la lâche au-dessus de votre visage. La pierre ne tombe pas, elle flotte. Une sensation étrange de paix et de calme vous investit.
-* "Qu'est-ce que vous faites{refus2:!}?"[]<br>"Silence." Eulaée se concentre,{not refus: et son air jovial se voit remplacé } d'un sérieux tout à coup inquiétant.
+* "Qu'est-ce que vous faites{refus2:!}?"[]
+"Silence." Eulaée se concentre,{not refus: et son air jovial se voit remplacé } d'un sérieux tout à coup inquiétant.
 * [Vous laisser faire]
 * {refus2}[Vous débattre] Vos mains sont attachées fermement. Eulaée a perdu tout air empathique, et un léger mépris se dévoile sur son visage.
 - Subitement, votre tête vous fait atrocement mal. Ça vous prend d'un coup sec, insinueux. Vous sentez comme des doigts glacés qui se glissent dans votre crâne, qui attrape votre cerveau. Vous avez l'impression que vos yeux s'enfoncent dans leurs orbites.
 Il vous est impossible de parler, impossible de crier. Le temps de vous en rendre compte, vos sens s'évanouissent l'un après l'autre. Vous ne voyez plus rien, puis n'entendez plus rien, puis ne sentez plus rien. Le vide absolu. Vous vous sentez chuter brusquement dans le vide.->flashback01
+
+
 === flashback01
 <br><br>Vous entendez la voix d'Eulaée à nouveau. Elle a perdu toute sympathie. Sèchement, elle vous ordonne:<br>"Ouvre-toi."->a
+
 =a
 *["Mes épaules..."]Vos épaules vous font mal. Les sangles vous liment les trapèzes. Vous vous cramponnez à votre siège.->a
 *["Ma tête..."]Vous avez complètement perdu le sens de l'orientation. Où est le haut? Votre casque vous serre l'arrière de la tête. Les secousses vous ballotent.->a
 *["J'ai chaud..."]Les flammes vous entourent. La coque est brûlante. Vous êtes piégé dans un four ailé.->a
 *->a1->b
+
 =a1
 <br>"Qu'est-ce que..." ->->
+
 =b
 +{b<3}["Mes mains..."]Vos mains sont{| encore| toujours} vissées sur le système de contrôle.
     * *Appuyer sur le bouton d'éjection[] ne fait rien. Vous vous acharnez dessus, sans succès.->b
     * *Redresser les manettes de toutes vos forces[] les explose. Vous êtes condamné. ->b
     * *[Ouvrir manuellement le toit du vaisseau] Le vent s'engouffre dans la capsule et arrache le toit du vaisseau en un instant.->b
 * ->b1->c
+
 =b1
 <br>"C'est impossible..." ->->
+
 =c 
 Vous transpercez les nuages. L'impact est proche. Les commandes ne répondent plus.
 *{suicide_arches} ["Je dois la protéger..."] Vous vous retournez. Elle est tétanisée. Ses yeux sont écarquillés. Le vent coupe ses larmes aussitôt nées pour les glisser dans ses doux cheveux. Elle serre un morceau de tissu si fort entre ses mains qu'elles sont bleues.
@@ -190,8 +238,10 @@ Vous transpercez les nuages. L'impact est proche. Les commandes ne répondent pl
         * * *[Maia va mourir.]Tout mais pas elle.
             * * * *[Maia va mourir.]Où est-elle maintenant? ->maia
 *[Fermer les yeux] Vous fermez les yeux. Vous n'imaginiez pas finir comme ça. ->d
+
 =d 
 TODO
+
 =maia
 TODO
 
@@ -240,7 +290,7 @@ Il s'approche légèrement de vous, tend le cou et plisse les yeux, scrutant les
 -> intro_bureau04.name_given_ironic
 
 = name_given
-{not name_given_ironic:Il se redresse et commence à marcher lentement dans la pièce."Un langage inconnu, un nom jamais entendu et accoutrement qui m'est étranger. Dis-moi, Kant.} Tu as pulverisé bien plus des leurs que mes parangons. Pourquoi?"
+{not name_given_ironic:Il se redresse et commence à marcher lentement dans la pièce.<br>"Un langage inconnu, un nom jamais entendu et accoutrement qui m'est étranger. Dis-moi, Kant.} Tu as pulverisé bien plus des leurs que de mes parangons. Pourquoi?"
 -> name_given_suite
 
 =name_given_ironic
