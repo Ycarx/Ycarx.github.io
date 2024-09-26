@@ -37,7 +37,7 @@
 
     // page features setup
     setupTheme(globalTagTheme);
-    var hasSave = false;//loadSavePoint();
+    var hasSave = loadSavePoint();
     setupButtons(hasSave);
 
     // Set initial save point

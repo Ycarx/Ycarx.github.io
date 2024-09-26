@@ -97,13 +97,13 @@ Vous reprenez vos esprits et remontez prudemment dans le couloir. Les gardes son
         "Oh. Vous êtes reveillé!"<br>Vous ouvrez doucement les yeux. Une jeune femme est à votre chevet. Elle est vêtue d'une longue robe rouge, un long tablier blanc reposant par-dessus. Elle vous observe avec de grands yeux malicieux cachés derrière de grosses lunettes rondes, et encadrés par un visage fin sur lequelle de grosses boucles rousses rebondissent.
 - ->intro_infirmerie02
 === intro_infirmerie02
-VAR infirmerie_vue =1
-* (soeurs)[Regarder autour de vous]Vous regardez autour de vous. Une grande salle de pierre blanche ressemblant une abbaye, peuplée de lits et d'inconnus qui dorment ou gémissent de douleur. D'autres femmes, toutes vêtues du même apparât, naviguent parmis les blessés pour administrer des soins à l'aide de potions et de pierres colorées, qui luisent en réponse aux psaumes qu'elles murmurent. {eulaee:Eulaée|La jeune femme} sourit en vous voyant observer l'endroit.<br>"Nous sommes les Soeurs de Carimdel. Nous soignons les malades, ici. Tel est notre voeu."
+VAR infirmerie_vue = 1
+* {infirmerie_vue==1} "C'était quoi, un rêve?"[]
+"Un rêve? Oh, j'ai bien peur que non, monsieur. {suicide_arches:Vous nous avez fait très peur, vous savez. D'abord vous débarquez comme ça, et ensuite vous menacez de vous tuer... Personne n'y a rien compris.} C'est incroyable que vous soyez toujours vivant." Elle se penche légèrement sur vous et joint ses mains, attentive.
 ~ infirmerie_vue+=1
 -> intro_infirmerie02
-
-* (reve) {infirmerie_vue==1} "C'était quoi, un rêve?"[]
-"Un rêve? Oh, j'ai bien peur que non, monsieur. {suicide_arches:Vous nous avez fait très peur, vous savez. D'abord vous débarquez comme ça, et ensuite vous menacez de vous tuer... Personne n'y a rien compris.} C'est incroyable que vous soyez toujours vivant." Elle se penche légèrement sur vous et joint ses mains, attentive.
+* (soeurs)[Regarder autour de vous]Vous regardez autour de vous.
+Une grande salle de pierre blanche ressemblant à une abbaye, peuplée de lits et d'inconnus qui dorment ou gémissent de douleur. D'autres femmes, toutes vêtues du même apparât, naviguent parmis les blessés pour administrer des soins à l'aide de potions et de pierres colorées, qui luisent en réponse aux psaumes qu'elles murmurent. {eulaee:Eulaée|La jeune femme} sourit en vous voyant observer l'endroit.<br>"Nous sommes les Soeurs de Carimdel. Nous soignons les malades, ici. Tel est notre voeu."
 ~ infirmerie_vue+=1
 -> intro_infirmerie02
 * (frichelangue)"Comment se fait-il que je vous comprenne?"[]
@@ -137,7 +137,7 @@ VAR infirmerie_vue =1
 * {vexee and TURNS_SINCE(->intro_infirmerie02.vexee)<1} [Vous excuser] "Pardonnez-moi, je ne voulais pas vous blesser", vous rattrapez-vous avec une légère maladresse. Eulaée vous esquisse un sourire réservé.<br>"Ce n'est rien. Vous devez être un peu perdu."
 ~karma_Eulaee+=2
 ->intro_infirmerie02
-* {frichelangue} "{infirmerie_vue>3:Je n'ai rien compris à ce que vous aviez dit, à propos de...|Je ne comprends rien à ce que vous dites. }Frichelangue? Ségur?"[]
+* {frichelangue} "{not came_from(->intro_infirmerie02.frichelangue):Je n'ai rien compris à ce que vous aviez dit, à propos de...|Je ne comprends rien à ce que vous dites. }Frichelangue? Ségur?"[]
 "Vous savez, les rumeurs à votre sujet sont déjà nombreuses dans la ville", vous répond-elle. "Tout le monde veut savoir d'où vient le Perceciel."
     * *"Le... quoi?"[]
     * *"Je suis complètement perdu."[]
