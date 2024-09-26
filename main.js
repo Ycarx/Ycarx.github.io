@@ -1,22 +1,19 @@
-
 (function(storyContent) {
 
-    // Create ink story from the content using inkjs
+    // Créer l'histoire Ink à partir du contenu en utilisant inkjs
     var story = new inkjs.Story(storyContent);
 
     var savePoint = "";
+    var choiceHistory = []; // Variable pour stocker l'historique des choix
 
     let savedTheme;
     let globalTagTheme;
 
-    // Global tags - those at the top of the ink file
-    // We support:
-    //  # theme: dark
-    //  # author: Your Name
+    // Tags globaux - ceux en haut du fichier Ink
     var globalTags = story.globalTags;
     if( globalTags ) {
         for(var i=0; i<story.globalTags.length; i++) {
-            var globalTag = story.globalTags[i];
+            var globalTag = globalTags[i];
             var splitTag = splitPropertyTag(globalTag);
 
             // THEME: dark
@@ -24,10 +21,10 @@
                 globalTagTheme = splitTag.val;
             }
 
-            // author: Your Name
+            // author: Votre Nom
             else if( splitTag && splitTag.property == "author" ) {
                 var byline = document.querySelector('.byline');
-                byline.innerHTML = "by "+splitTag.val;
+                byline.innerHTML = "par "+splitTag.val;
             }
         }
     }
@@ -35,309 +32,251 @@
     var storyContainer = document.querySelector('#story');
     var outerScrollContainer = document.querySelector('.outerContainer');
 
-    // page features setup
+    // Configuration des fonctionnalités de la page
     setupTheme(globalTagTheme);
+
+    // Charger le point de sauvegarde s'il existe
     var hasSave = loadSavePoint();
     setupButtons(hasSave);
 
-    // Set initial save point
+    // Définir le point de sauvegarde initial
     savePoint = story.state.toJson();
 
-    // Kick off the start of the story!
+    // Démarrer l'histoire !
     continueStory(true);
 
-    // Main story processing function. Each time this is called it generates
-    // all the next content up as far as the next set of choices.
-
-    
-    function continueStory(firstTime) {
+    // Fonction principale de traitement de l'histoire
+    function continueStory(firstTime, suppressOutput, suppressChoices) {
+        suppressOutput = suppressOutput || false;
+        suppressChoices = suppressChoices || false;
 
         var paragraphIndex = 0;
         var delay = 0.0;
-        //custom code
-        //const currentBackground = story.variablesState["background"];
-        // Add separator when the story continues (not the first time)
-    if (!firstTime) {
 
-         // Supprimer l'ancien séparateur
-    var existingSeparator = document.querySelector('.story-separator');
-    if (existingSeparator) {
-        existingSeparator.remove();
-    }
-        var separatorElement = document.createElement('hr'); // Create a horizontal line
-        separatorElement.classList.add("story-separator"); // Optional: Add class for custom styling
-        storyContainer.appendChild(separatorElement);
-    }
+        // Ajouter un séparateur lorsque l'histoire continue (pas la première fois)
+        if (!firstTime && !suppressOutput) {
 
+            // Supprimer l'ancien séparateur
+            var existingSeparator = document.querySelector('.story-separator');
+            if (existingSeparator) {
+                existingSeparator.remove();
+            }
+            var separatorElement = document.createElement('hr'); // Créer une ligne horizontale
+            separatorElement.classList.add("story-separator"); // Optionnel : ajouter une classe pour le style personnalisé
+            storyContainer.appendChild(separatorElement);
+        }
 
-        //custom code
-        // Don't over-scroll past new content
+        // Ne pas défiler au-delà du nouveau contenu
         var previousBottomEdge = firstTime ? 0 : contentBottomEdgeY();
 
-        // Generate story text - loop through available content
-        while(story.canContinue) {
+        // Générer le texte de l'histoire - boucle à travers le contenu disponible
+        while (story.canContinue) {
 
-            // Get ink to generate the next paragraph
+            // Obtenir Ink pour générer le paragraphe suivant
             var paragraphText = story.Continue();
             var tags = story.currentTags;
 
-            // Any special tags included with this line
-            var customClasses = [];
-            for(var i=0; i<tags.length; i++) {
-                var tag = tags[i];
+            // Traiter le contenu uniquement si suppressOutput est faux
+            if (!suppressOutput) {
+                // Tous les tags spéciaux inclus avec cette ligne
+                var customClasses = [];
+                for (var i = 0; i < tags.length; i++) {
+                    var tag = tags[i];
 
-                // Detect tags of the form "X: Y". Currently used for IMAGE and CLASS but could be
-                // customised to be used for other things too.
-                var splitTag = splitPropertyTag(tag);
-				splitTag.property = splitTag.property.toUpperCase();
+                    // Détecter les tags de la forme "X: Y"
+                    var splitTag = splitPropertyTag(tag);
+                    if (splitTag) {
+                        splitTag.property = splitTag.property.toUpperCase();
 
-                // AUDIO: src
-                if( splitTag && splitTag.property == "AUDIO" ) {
-                  if('audio' in this) {
-                    this.audio.pause();
-                    this.audio.removeAttribute('src');
-                    this.audio.load();
-                  }
-                  this.audio = new Audio(splitTag.val);
-                  this.audio.play();
-                }
+                        // AUDIO: src
+                        if (splitTag.property == "AUDIO") {
+                            if ('audio' in this) {
+                                this.audio.pause();
+                                this.audio.removeAttribute('src');
+                                this.audio.load();
+                            }
+                            this.audio = new Audio(splitTag.val);
+                            this.audio.play();
+                        }
 
-                // AUDIOLOOP: src
-                else if( splitTag && splitTag.property == "AUDIOLOOP" ) {
-                  if('audioLoop' in this) {
-                    this.audioLoop.pause();
-                    this.audioLoop.removeAttribute('src');
-                    this.audioLoop.load();
-                  }
-                  this.audioLoop = new Audio(splitTag.val);
-                  this.audioLoop.play();
-                  this.audioLoop.loop = true;
-                }
+                        // AUDIOLOOP: src
+                        else if (splitTag.property == "AUDIOLOOP") {
+                            if ('audioLoop' in this) {
+                                this.audioLoop.pause();
+                                this.audioLoop.removeAttribute('src');
+                                this.audioLoop.load();
+                            }
+                            this.audioLoop = new Audio(splitTag.val);
+                            this.audioLoop.play();
+                            this.audioLoop.loop = true;
+                        }
 
-                // IMAGE: src
-                if( splitTag && splitTag.property == "IMAGE" ) {
-                    var imageElement = document.createElement('img');
-                    imageElement.src = splitTag.val;
-                    storyContainer.appendChild(imageElement);
+                        // IMAGE: src
+                        else if (splitTag.property == "IMAGE") {
+                            var imageElement = document.createElement('img');
+                            imageElement.src = splitTag.val;
+                            storyContainer.appendChild(imageElement);
 
-                    imageElement.onload = () => {
-                        console.log(`scrollingto ${previousBottomEdge}`)
-                        scrollDown(previousBottomEdge)
+                            imageElement.onload = () => {
+                                console.log(`scrolling to ${previousBottomEdge}`);
+                                scrollDown(previousBottomEdge);
+                            }
+
+                            showAfter(delay, imageElement);
+                            delay += 200.0;
+                        }
+
+                        // LINK: url
+                        else if (splitTag.property == "LINK") {
+                            window.location.href = splitTag.val;
+                        }
+
+                        // LINKOPEN: url
+                        else if (splitTag.property == "LINKOPEN") {
+                            window.open(splitTag.val);
+                        }
+
+                        // BACKGROUND: src
+                        else if (splitTag.property == "BACKGROUND") {
+                            outerScrollContainer.style.backgroundImage = 'url(' + splitTag.val + ')';
+                        }
+
+                        // CLASS: className
+                        else if (splitTag.property == "CLASS") {
+                            customClasses.push(splitTag.val);
+                        }
                     }
 
-                    showAfter(delay, imageElement);
-                    delay += 200.0;
-                }
+                    // Gérer les tags sans propriété
+                    else if (tag == "CLEAR" || tag == "RESTART") {
+                        removeAll("p");
+                        removeAll("img");
 
-                // LINK: url
-                else if( splitTag && splitTag.property == "LINK" ) {
-                    window.location.href = splitTag.val;
-                }
+                        // Commenter cette ligne si vous voulez laisser l'en-tête visible lors du nettoyage
+                        setVisible(".header", false);
 
-                // LINKOPEN: url
-                else if( splitTag && splitTag.property == "LINKOPEN" ) {
-                    window.open(splitTag.val);
-                }
-
-                // BACKGROUND: src
-                else if( splitTag && splitTag.property == "BACKGROUND" ) {
-                    outerScrollContainer.style.backgroundImage = 'url('+splitTag.val+')';
-                }
-
-                // CLASS: className
-                else if( splitTag && splitTag.property == "CLASS" ) {
-                    customClasses.push(splitTag.val);
-                }
-
-                // CLEAR - removes all existing content.
-                // RESTART - clears everything and restarts the story from the beginning
-                else if( tag == "CLEAR" || tag == "RESTART" ) {
-                    removeAll("p");
-                    removeAll("img");
-
-                    // Comment out this line if you want to leave the header visible when clearing
-                    setVisible(".header", false);
-
-                    if( tag == "RESTART" ) {
-                        restart();
-                        return;
+                        if (tag == "RESTART") {
+                            restart();
+                            return;
+                        }
                     }
                 }
-            }
-		
-		// Check if paragraphText is empty
-		if (paragraphText.trim().length == 0) {
-                continue; // Skip empty paragraphs
-		}
 
-            // Create paragraph element (initially hidden)
-            var paragraphElement = document.createElement('p');
-            paragraphElement.innerHTML = paragraphText;
-            storyContainer.appendChild(paragraphElement);
-
-            // Add any custom classes derived from ink tags
-            for(var i=0; i<customClasses.length; i++)
-                paragraphElement.classList.add(customClasses[i]);
-
-            // Fade in paragraph after a short delay
-            showAfter(delay, paragraphElement);
-            delay += 200.0;
-        }
-        function updateCharacterSheet() {
-            // Récupération des variables Ink
-            var characterName = story.variablesState["character_name"];
-            var characterClass = story.variablesState["character_class"];
-            var characterLevel = story.variablesState["character_level"];
-            var strength = story.variablesState["strength"];
-            var dexterity = story.variablesState["dexterity"];
-            var constitution = story.variablesState["constitution"];
-            var intelligence = story.variablesState["intelligence"];
-            var charisma = story.variablesState["charisma"];
-            
-            // Mise à jour des éléments HTML
-            document.getElementById("char-name").textContent = characterName || "";
-            document.getElementById("char-class").textContent = characterClass || "";
-            document.getElementById("char-level").textContent = characterLevel || "";
-            document.getElementById("char-strength").textContent = strength || "";
-            document.getElementById("char-dexterity").textContent = dexterity || "";
-            document.getElementById("char-constitution").textContent = constitution || "";
-            document.getElementById("char-intelligence").textContent = intelligence || "";
-            document.getElementById("char-charisma").textContent = charisma || "";
-        
-            var playerInventoryList = document.getElementById("inventory-list");
-
-if (playerInventoryList) {
-    playerInventoryList.innerHTML = "";
-
-    var playerInventory = story.variablesState["playerInventory"];
-
-    if (playerInventory && playerInventory.entries) {
-        for (var [key, value] of playerInventory.entries()) {
-            var li = document.createElement("li");
-
-            // Utiliser les objets définis dans objets.js
-            var objectKey = JSON.parse(key).itemName;
-            if (objetsDetails[objectKey]) {
-                // Créer un conteneur pour le tooltip
-                var tooltipContainer = document.createElement("div");
-                tooltipContainer.classList.add("tooltip-container");
-
-                // Nom de l'objet
-                tooltipContainer.textContent = objetsDetails[objectKey].name;
-
-                // Ajouter le texte du tooltip
-                var tooltipText = document.createElement("span");
-                tooltipText.classList.add("tooltip-text");
-                tooltipText.textContent = objetsDetails[objectKey].description;
-
-                // Ajouter le tooltip au conteneur
-                tooltipContainer.appendChild(tooltipText);
-                li.appendChild(tooltipContainer);
-            } else {
-                li.textContent = objectKey; // Si l'objet n'est pas défini, on affiche son nom brut
-            }
-
-            playerInventoryList.appendChild(li);
-        }
-    }
-}
-
-
-
-        }
-        // Create HTML choices from ink choices
-        story.currentChoices.forEach(function(choice) {
-
-            // Create paragraph with anchor element
-            var choiceTags = choice.tags;
-            var customClasses = [];
-            var isClickable = true;
-            for(var i=0; i<choiceTags.length; i++) {
-                var choiceTag = choiceTags[i];
-                var splitTag = splitPropertyTag(choiceTag);
-				splitTag.property = splitTag.property.toUpperCase();
-
-                if(choiceTag.toUpperCase() == "UNCLICKABLE"){
-                    isClickable = false
+                // Vérifier si paragraphText est vide
+                if (paragraphText.trim().length == 0) {
+                    continue; // Ignorer les paragraphes vides
                 }
 
-                if( splitTag && splitTag.property == "CLASS" ) {
-                    customClasses.push(splitTag.val);
+                // Créer un élément de paragraphe (initialement masqué)
+                var paragraphElement = document.createElement('p');
+                paragraphElement.innerHTML = paragraphText;
+                storyContainer.appendChild(paragraphElement);
+
+                // Ajouter toutes les classes personnalisées dérivées des tags Ink
+                for (var i = 0; i < customClasses.length; i++)
+                    paragraphElement.classList.add(customClasses[i]);
+
+                // Faire apparaître le paragraphe après un court délai
+                showAfter(delay, paragraphElement);
+                delay += 200.0;
+            }
+        }
+
+        // Créer des choix HTML à partir des choix Ink, uniquement si suppressOutput et suppressChoices sont faux
+        if (!suppressOutput && !suppressChoices) {
+            story.currentChoices.forEach(function (choice) {
+
+                // Créer un paragraphe avec un élément d'ancre
+                var choiceTags = choice.tags;
+                var customClasses = [];
+                var isClickable = true;
+                for (var i = 0; i < choiceTags.length; i++) {
+                    var choiceTag = choiceTags[i];
+                    var splitTag = splitPropertyTag(choiceTag);
+                    if (splitTag) {
+                        splitTag.property = splitTag.property.toUpperCase();
+
+                        if (splitTag.property == "CLASS") {
+                            customClasses.push(splitTag.val);
+                        }
+                    }
+
+                    if (choiceTag.toUpperCase() == "UNCLICKABLE") {
+                        isClickable = false;
+                    }
                 }
 
-            }
+                var choiceParagraphElement = document.createElement('p');
+                choiceParagraphElement.classList.add("choice");
 
-            
-            var choiceParagraphElement = document.createElement('p');
-            choiceParagraphElement.classList.add("choice");
+                for (var i = 0; i < customClasses.length; i++)
+                    choiceParagraphElement.classList.add(customClasses[i]);
 
-            for(var i=0; i<customClasses.length; i++)
-                choiceParagraphElement.classList.add(customClasses[i]);
+                if (isClickable) {
+                    choiceParagraphElement.innerHTML = `<a href='#'>${choice.text}</a>`;
+                } else {
+                    choiceParagraphElement.innerHTML = `<span class='unclickable'>${choice.text}</span>`;
+                }
+                storyContainer.appendChild(choiceParagraphElement);
+                // Mettre à jour le style des choix
+                updateChoiceStyles();
+                // Faire apparaître le choix après un court délai
+                showAfter(delay, choiceParagraphElement);
+                delay += 200.0;
 
-            if(isClickable){
-                choiceParagraphElement.innerHTML = `<a href='#'>${choice.text}</a>`
-            }else{
-                choiceParagraphElement.innerHTML = `<span class='unclickable'>${choice.text}</span>`
-            }
-            storyContainer.appendChild(choiceParagraphElement);
-            // Met à jour le style des choix 
-            updateChoiceStyles();
-            // Fade choice in after a short delay
-            showAfter(delay, choiceParagraphElement);
-            delay += 200.0;
+                // Clic sur le choix
+                if (isClickable) {
+                    var choiceAnchorEl = choiceParagraphElement.querySelectorAll("a")[0];
+                    choiceAnchorEl.addEventListener("click", function (event) {
 
-            // Click on choice
-            if(isClickable){
-                var choiceAnchorEl = choiceParagraphElement.querySelectorAll("a")[0];
-                choiceAnchorEl.addEventListener("click", function(event) {
+                        // Ne pas suivre le lien <a>
+                        event.preventDefault();
 
-                    // Don't follow <a> link
-                    event.preventDefault();
+                        // Étendre la hauteur pour s'adapter
+                        storyContainer.style.height = contentBottomEdgeY() + "px";
 
-                    // Extend height to fit
-                    // We do this manually so that removing elements and creating new ones doesn't
-                    // cause the height (and therefore scroll) to jump backwards temporarily.
-                    storyContainer.style.height = contentBottomEdgeY()+"px";
+                        // Supprimer tous les choix existants
+                        removeAll(".choice");
 
-                    // Remove all existing choices
-                    removeAll(".choice");
+                        // Enregistrer l'index du choix
+                        console.log("Choix : " + choice.index);
+                        choiceHistory.push(choice.index);
 
-                    // Tell the story where to go next
-                    story.ChooseChoiceIndex(choice.index);
+                        // Indiquer à l'histoire où aller ensuite
+                        story.ChooseChoiceIndex(choice.index);
 
-                    // This is where the save button will save from
-                    savePoint = story.state.toJson();
-                    
-                    // Aaand loop
-                    updateBackground(currentBackground);
-                    continueStory();
+                        // Mettre à jour le point de sauvegarde
+                        savePoint = story.state.toJson();
 
-                });
-            }
-        });
+                        // Continuer l'histoire
+                        continueStory();
 
-		// Unset storyContainer's height, allowing it to resize itself
-		storyContainer.style.height = "";
-        if( !firstTime )
+                    });
+                }
+            });
+        }
+
+        // Mettre à jour d'autres éléments comme le fond et la fiche de personnage
+        if (!suppressOutput && !suppressChoices) {
+            const currentBackground = story.variablesState["background"];
+            updateBackground(currentBackground);
+            updateCharacterSheet();
+        }
+
+        // Réinitialiser la hauteur de storyContainer pour lui permettre de se redimensionner
+        storyContainer.style.height = "";
+        if (!firstTime && !suppressOutput)
             scrollDown(previousBottomEdge);
-
-        const currentBackground = story.variablesState["background"];
-        updateBackground(currentBackground);
-        updateCharacterSheet();
-
-function updateBackground(backgroundImage){
-    if (backgroundImage){
-        outerScrollContainer.style.backgroundImage = `url('${backgroundImage}')`;
-    }
-}
     }
 
+    // Fonction pour redémarrer l'histoire
     function restart() {
         story.ResetState();
+        choiceHistory = []; // Réinitialiser l'historique des choix
 
         setVisible(".header", true);
 
-        // set save point to here   
+        // Définir le point de sauvegarde ici
         savePoint = story.state.toJson();
 
         continueStory(true);
@@ -345,38 +284,186 @@ function updateBackground(backgroundImage){
         outerScrollContainer.scrollTo(0, 0);
     }
 
-    // -----------------------------------
-    // Various Helper functions
-    // -----------------------------------
+    // Fonction pour charger le point de sauvegarde
+    function loadSavePoint() {
+        try {
+            let savedState = window.localStorage.getItem('save-state');
+            let savedChoiceHistory = JSON.parse(window.localStorage.getItem('choice-history'));
+            if (savedState && savedChoiceHistory) {
+                // Ne pas charger l'état maintenant, nous allons rejouer les choix
+                // Au lieu de cela, définir hasSave à true
+                return true;
+            }
+        } catch (e) {
+            console.debug("Impossible de charger l'état sauvegardé");
+        }
+        return false;
+    }
 
-    // Detects whether the user accepts animations
+    // Fonction pour configurer les boutons
+    function setupButtons(hasSave) {
+
+        // Bouton pour cacher/afficher l'histoire
+        let toggleStoryEl = document.getElementById("toggle-story");
+        if (toggleStoryEl) {
+            toggleStoryEl.addEventListener("click", function(event) {
+                document.body.classList.toggle("hide-story");
+                // Mettre à jour le texte du bouton
+                if (document.body.classList.contains('hide-story')) {
+                    toggleStoryEl.textContent = 'afficher l\'histoire';
+                } else {
+                    toggleStoryEl.textContent = 'cacher l\'histoire';
+                }
+
+                // Sauvegarder l'état de l'affichage de l'histoire
+                try {
+                    window.localStorage.setItem('hide-story', document.body.classList.contains('hide-story') ? 'true' : 'false');
+                } catch (e) {
+                    console.warn("Impossible de sauvegarder l'état hide-story");
+                }
+            });
+
+            // Charger l'état initial
+            setupStoryVisibility();
+
+            // Initialiser le texte du bouton en fonction de l'état initial
+            if (document.body.classList.contains('hide-story')) {
+                toggleStoryEl.textContent = 'afficher l\'histoire';
+            } else {
+                toggleStoryEl.textContent = 'cacher l\'histoire';
+            }
+        }
+
+        let rewindEl = document.getElementById("rewind");
+        if (rewindEl) rewindEl.addEventListener("click", function(event) {
+            removeAll("p");
+            removeAll("img");
+            setVisible(".header", false);
+            restart();
+        });
+
+        let saveEl = document.getElementById("save");
+        if (saveEl) saveEl.addEventListener("click", function(event) {
+            try {
+                window.localStorage.setItem('save-state', savePoint);
+                window.localStorage.setItem('choice-history', JSON.stringify(choiceHistory));
+                console.log("history: [", choiceHistory + "]");    
+                document.getElementById("reload").removeAttribute("disabled");
+                window.localStorage.setItem('theme', document.body.classList.contains("dark") ? "dark" : "");
+            } catch (e) {
+                console.warn("Impossible de sauvegarder l'état");
+            }
+
+        });
+
+        let reloadEl = document.getElementById("reload");
+        if (!hasSave) {
+            reloadEl.setAttribute("disabled", "disabled");
+        }
+        reloadEl.addEventListener("click", function(event) {
+            if (reloadEl.getAttribute("disabled"))
+                return;
+
+            removeAll("p");
+            removeAll("img");
+
+            try {
+                // Réinitialiser l'histoire
+                story.ResetState();
+                console.log("clearing history");
+                choiceHistory = [];
+
+                // Charger l'historique des choix sauvegardé
+                let savedChoiceHistory = JSON.parse(window.localStorage.getItem('choice-history'));
+                console.log("savedChoiceHistory", savedChoiceHistory);
+                if (savedChoiceHistory) {
+                    // Rejouer les choix pour régénérer le contenu
+                    replayChoices(savedChoiceHistory);
+                }
+
+            } catch (e) {
+                console.debug("Impossible de charger l'état sauvegardé");
+            }
+
+            // Mettre à jour le point de sauvegarde
+            savePoint = story.state.toJson();
+
+            // Défilement vers le haut
+            outerScrollContainer.scrollTo(0, 0);
+        });
+
+        let themeSwitchEl = document.getElementById("theme-switch");
+        if (themeSwitchEl) themeSwitchEl.addEventListener("click", function(event) {
+            document.body.classList.add("switched");
+            document.body.classList.toggle("dark");
+        });
+    }
+
+    // Fonction pour rejouer les choix
+    function replayChoices(savedChoiceHistory) {
+        // Parcourir les choix sauvegardés
+        for (let i = 0; i < savedChoiceHistory.length; i++) {
+            let choiceIndex = savedChoiceHistory[i];
+
+            // Traiter et afficher le contenu jusqu'au prochain choix, sans afficher les choix
+            while (story.canContinue) {
+                continueStory(false, false, true); // suppressChoices = true
+            }
+
+            // Obtenir les choix disponibles (ils ne seront pas affichés)
+            let currentChoices = story.currentChoices;
+
+            // Trouver le choix avec l'index sauvegardé
+            let choice = currentChoices.find(c => c.index === choiceIndex);
+
+            if (choice) {
+                // Enregistrer l'index du choix
+                choiceHistory.push(choice.index);
+
+                // Choisir le choix
+                console.log("Rejouer le choix : " + choice.index);
+                story.ChooseChoiceIndex(choice.index);
+
+            } else {
+                console.warn("Impossible de trouver le choix correspondant lors de la relecture pour l'index : " + choiceIndex);
+                break;
+            }
+        }
+
+        // Après avoir rejoué tous les choix, traiter et afficher le contenu restant, cette fois en affichant les choix
+        continueStory(false);
+
+        // Mettre à jour le point de sauvegarde
+        savePoint = story.state.toJson();
+    }
+
+    // Fonction pour détecter si l'utilisateur accepte les animations
     function isAnimationEnabled() {
         return window.matchMedia('(prefers-reduced-motion: no-preference)').matches;
     }
 
-    // Fades in an element after a specified delay
+    // Fonction pour faire apparaître un élément après un délai spécifié
     function showAfter(delay, el) {
         if( isAnimationEnabled() ) {
             el.classList.add("hide");
             setTimeout(function() { el.classList.remove("hide") }, delay);
         } else {
-            // If the user doesn't want animations, show immediately
+            // Si l'utilisateur ne veut pas d'animations, afficher immédiatement
             el.classList.remove("hide");
         }
     }
 
-    // Scrolls the page down, but no further than the bottom edge of what you could
-    // see previously, so it doesn't go too far.
+    // Fonction pour faire défiler la page vers le bas
     function scrollDown(previousBottomEdge) {
-        // If the user doesn't want animations, let them scroll manually
+        // Si l'utilisateur ne veut pas d'animations, le laisser défiler manuellement
         if ( !isAnimationEnabled() ) {
             return;
         }
 
-        // Line up top of screen with the bottom of where the previous content ended
+        // Aligner le haut de l'écran avec le bas de l'endroit où le contenu précédent s'est terminé
         var target = previousBottomEdge;
 
-        // Can't go further than the very bottom of the page
+        // Ne peut pas aller plus loin que le bas de la page
         var limit = outerScrollContainer.scrollHeight - outerScrollContainer.clientHeight;
         if( target > limit ) target = limit;
 
@@ -395,15 +482,13 @@ function updateBackground(backgroundImage){
         requestAnimationFrame(step);
     }
 
-    // The Y coordinate of the bottom end of all the story content, used
-    // for growing the container, and deciding how far to scroll.
+    // Fonction pour obtenir le bord inférieur du contenu
     function contentBottomEdgeY() {
         var bottomElement = storyContainer.lastElementChild;
         return bottomElement ? bottomElement.offsetTop + bottomElement.offsetHeight : 0;
     }
 
-    // Remove all elements that match the given selector. Used for removing choices after
-    // you've picked one, as well as for the CLEAR and RESTART tags.
+    // Fonction pour supprimer tous les éléments correspondant à un sélecteur
     function removeAll(selector)
     {
         var allElements = storyContainer.querySelectorAll(selector);
@@ -413,7 +498,7 @@ function updateBackground(backgroundImage){
         }
     }
 
-    // Used for hiding and showing the header when you CLEAR or RESTART the story respectively.
+    // Fonction pour définir la visibilité des éléments correspondant à un sélecteur
     function setVisible(selector, visible)
     {
         var allElements = storyContainer.querySelectorAll(selector);
@@ -426,14 +511,12 @@ function updateBackground(backgroundImage){
         }
     }
 
-    // Helper for parsing out tags of the form:
-    //  # PROPERTY: value
-    // e.g. IMAGE: source path
+    // Helper pour analyser les tags de la forme "PROPERTY: value"
     function splitPropertyTag(tag) {
         var propertySplitIdx = tag.indexOf(":");
-        if( propertySplitIdx != null ) {
+        if( propertySplitIdx != -1 ) {
             var property = tag.substr(0, propertySplitIdx).trim();
-            var val = tag.substr(propertySplitIdx+1).trim();
+            var val = tag.substr(propertySplitIdx + 1).trim();
             return {
                 property: property,
                 val: val
@@ -443,33 +526,18 @@ function updateBackground(backgroundImage){
         return null;
     }
 
-    // Loads save state if exists in the browser memory
-    function loadSavePoint() {
-
-        try {
-            let savedState = window.localStorage.getItem('save-state');
-            if (savedState) {
-                story.state.LoadJson(savedState);
-                return true;
-            }
-        } catch (e) {
-            console.debug("Couldn't load save state");
-        }
-        return false;
-    }
-
-    // Detects which theme (light or dark) to use
+    // Fonction pour détecter et configurer le thème
     function setupTheme(globalTagTheme) {
 
-        // load theme from browser memory
+        // Charger le thème depuis la mémoire du navigateur
         var savedTheme;
         try {
             savedTheme = window.localStorage.getItem('theme');
         } catch (e) {
-            console.debug("Couldn't load saved theme");
+            console.debug("Impossible de charger le thème sauvegardé");
         }
 
-        // Check whether the OS/browser is configured for dark mode
+        // Vérifier si le système d'exploitation/le navigateur est configuré pour le mode sombre
         var browserDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
 
         if (savedTheme === "dark"
@@ -478,107 +546,98 @@ function updateBackground(backgroundImage){
             document.body.classList.add("dark");
     }
 
-    // Used to hook up the functionality for global functionality buttons
-    function setupButtons(hasSave) {
-
-        // Bouton pour cacher/afficher l'histoire
-let toggleStoryEl = document.getElementById("toggle-story");
-if (toggleStoryEl) {
-    toggleStoryEl.addEventListener("click", function(event) {
-        document.body.classList.toggle("hide-story");
-        // Mettre à jour le texte du bouton
-        if (document.body.classList.contains('hide-story')) {
-            toggleStoryEl.textContent = 'show story';
-        } else {
-            toggleStoryEl.textContent = 'hide story';
-        }
-
-        // Sauvegarder l'état de l'affichage de l'histoire
+    // Fonction pour configurer la visibilité de l'histoire
+    function setupStoryVisibility() {
         try {
-            window.localStorage.setItem('hide-story', document.body.classList.contains('hide-story') ? 'true' : 'false');
+            let hideStory = window.localStorage.getItem('hide-story');
+            if (hideStory === 'true') {
+                document.body.classList.add('hide-story');
+            }
         } catch (e) {
-            console.warn("Couldn't save hide-story state");
+            console.debug("Impossible de charger l'état hide-story");
         }
-    });
-
-    // Charger l'état initial
-    setupStoryVisibility();
-
-    // Initialiser le texte du bouton en fonction de l'état initial
-    if (document.body.classList.contains('hide-story')) {
-        toggleStoryEl.textContent = 'show story';
-    } else {
-        toggleStoryEl.textContent = 'hide story';
     }
-}
 
-        let rewindEl = document.getElementById("rewind");
-        if (rewindEl) rewindEl.addEventListener("click", function(event) {
-            removeAll("p");
-            removeAll("img");
-            setVisible(".header", false);
-            restart();
-        });
+    // Fonction pour mettre à jour les styles des choix
+    function updateChoiceStyles() {
+        var choiceElements = document.querySelectorAll('.choice a, .choice span');
 
-        let saveEl = document.getElementById("save");
-        if (saveEl) saveEl.addEventListener("click", function(event) {
-            try {
-                window.localStorage.setItem('save-state', savePoint);
-                document.getElementById("reload").removeAttribute("disabled");
-                window.localStorage.setItem('theme', document.body.classList.contains("dark") ? "dark" : "");
-            } catch (e) {
-                console.warn("Couldn't save state");
+        choiceElements.forEach(function(choice) {
+            var textContent = choice.textContent.trim();
+
+            // Vérifier si le texte commence et se termine par des guillemets
+            if (textContent.startsWith('"') && textContent.endsWith('"')) {
+                choice.classList.add('no-italic'); // Ajouter une classe pour enlever l'italique
             }
-
         });
+    }
 
-        let reloadEl = document.getElementById("reload");
-        if (!hasSave) {
-            reloadEl.setAttribute("disabled", "disabled");
+    // Fonction pour mettre à jour le fond
+    function updateBackground(backgroundImage) {
+        if (backgroundImage) {
+            outerScrollContainer.style.backgroundImage = `url('${backgroundImage}')`;
         }
-        reloadEl.addEventListener("click", function(event) {
-            if (reloadEl.getAttribute("disabled"))
-                return;
+    }
 
-            removeAll("p");
-            removeAll("img");
-            try {
-                let savedState = window.localStorage.getItem('save-state');
-                if (savedState) story.state.LoadJson(savedState);
-            } catch (e) {
-                console.debug("Couldn't load save state");
+    // Fonction pour mettre à jour la fiche de personnage
+    function updateCharacterSheet() {
+        // Récupérer les variables Ink
+        var characterName = story.variablesState["character_name"];
+        var characterClass = story.variablesState["character_class"];
+        var characterLevel = story.variablesState["character_level"];
+        var strength = story.variablesState["strength"];
+        var dexterity = story.variablesState["dexterity"];
+        var constitution = story.variablesState["constitution"];
+        var intelligence = story.variablesState["intelligence"];
+        var charisma = story.variablesState["charisma"];
+
+        // Mettre à jour les éléments HTML
+        document.getElementById("char-name").textContent = characterName || "";
+        document.getElementById("char-class").textContent = characterClass || "";
+        document.getElementById("char-level").textContent = characterLevel || "";
+        document.getElementById("char-strength").textContent = strength || "";
+        document.getElementById("char-dexterity").textContent = dexterity || "";
+        document.getElementById("char-constitution").textContent = constitution || "";
+        document.getElementById("char-intelligence").textContent = intelligence || "";
+        document.getElementById("char-charisma").textContent = charisma || "";
+
+        var playerInventoryList = document.getElementById("inventory-list");
+
+        if (playerInventoryList) {
+            playerInventoryList.innerHTML = "";
+
+            var playerInventory = story.variablesState["playerInventory"];
+
+            if (playerInventory && playerInventory.entries) {
+                for (var [key, value] of playerInventory.entries()) {
+                    var li = document.createElement("li");
+
+                    // Utiliser les objets définis dans objets.js
+                    var objectKey = JSON.parse(key).itemName;
+                    if (objetsDetails[objectKey]) {
+                        // Créer un conteneur pour le tooltip
+                        var tooltipContainer = document.createElement("div");
+                        tooltipContainer.classList.add("tooltip-container");
+
+                        // Nom de l'objet
+                        tooltipContainer.textContent = objetsDetails[objectKey].name;
+
+                        // Ajouter le texte du tooltip
+                        var tooltipText = document.createElement("span");
+                        tooltipText.classList.add("tooltip-text");
+                        tooltipText.textContent = objetsDetails[objectKey].description;
+
+                        // Ajouter le tooltip au conteneur
+                        tooltipContainer.appendChild(tooltipText);
+                        li.appendChild(tooltipContainer);
+                    } else {
+                        li.textContent = objectKey; // Si l'objet n'est pas défini, afficher son nom brut
+                    }
+
+                    playerInventoryList.appendChild(li);
+                }
             }
-            continueStory(true);
-        });
-
-        let themeSwitchEl = document.getElementById("theme-switch");
-        if (themeSwitchEl) themeSwitchEl.addEventListener("click", function(event) {
-            document.body.classList.add("switched");
-            document.body.classList.toggle("dark");
-        });
+        }
     }
 
 })(storyContent);
-
-function setupStoryVisibility() {
-    try {
-        let hideStory = window.localStorage.getItem('hide-story');
-        if (hideStory === 'true') {
-            document.body.classList.add('hide-story');
-        }
-    } catch (e) {
-        console.debug("Couldn't load hide-story state");
-    }
-}
-function updateChoiceStyles() {
-    var choiceElements = document.querySelectorAll('.choice a, .choice span');
-
-    choiceElements.forEach(function(choice) {
-        var textContent = choice.textContent.trim();
-
-        // Vérifie si le texte commence et se termine par des guillemets
-        if (textContent.startsWith('"') && textContent.endsWith('"')) {
-            choice.classList.add('no-italic'); // Ajoute une classe pour enlever l'italique
-        }
-    });
-}
