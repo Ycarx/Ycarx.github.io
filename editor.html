@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portfolio — editor (dev only)</title>
+<style>
+  :root {
+    --bg: #101012;
+    --panel: #17171a;
+    --fg: #e8e8ea;
+    --dim: #8a8a92;
+    --accent: #4da3ff;
+    --danger: #ff5d5d;
+    --gap: 10px;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--bg);
+    color: var(--fg);
+    font-family: "Segoe UI", system-ui, sans-serif;
+    padding-bottom: 100px;
+  }
+  header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 14px 20px;
+    background: var(--panel);
+    border-bottom: 1px solid #ffffff14;
+  }
+  header h1 { font-size: 15px; letter-spacing: .04em; text-transform: uppercase; }
+  header .warn { color: var(--dim); font-size: 12px; }
+  nav { display: flex; gap: 4px; margin-left: auto; }
+  nav button {
+    background: none; border: none; color: var(--dim);
+    font-size: 13px; letter-spacing: .06em; text-transform: uppercase;
+    padding: 8px 12px; border-radius: 6px; cursor: pointer;
+  }
+  nav button:hover { color: var(--fg); }
+  nav button.active { color: var(--accent); background: #ffffff14; }
+  main { padding: 20px; max-width: 1400px; margin: 0 auto; }
+  .section { display: none; }
+  .section.active { display: block; }
+  .items {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 16px;
+  }
+  .item {
+    background: var(--panel);
+    border-radius: 8px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .item .preview {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    border-radius: 6px;
+    background: #000;
+    display: block;
+  }
+  .item .filename { font-size: 11px; color: var(--dim); word-break: break-all; }
+  .item input, .item textarea {
+    width: 100%;
+    background: #0000004d;
+    border: 1px solid #ffffff1f;
+    color: var(--fg);
+    border-radius: 5px;
+    padding: 6px 8px;
+    font: inherit;
+    font-size: 13px;
+    resize: vertical;
+  }
+  .item textarea { min-height: 54px; }
+  .item label { font-size: 11px; color: var(--dim); text-transform: uppercase; letter-spacing: .04em; }
+  .sortable-item { grid-column: span 1; position: relative; transition: opacity .15s ease; }
+  .sortable-item .row { display: flex; gap: 8px; }
+  .sortable-item .row > * { flex: 1; }
+  .sortable-item .drag-handle {
+    position: absolute;
+    top: 6px;
+    right: 8px;
+    cursor: grab;
+    color: var(--dim);
+    font-size: 16px;
+    line-height: 1;
+    user-select: none;
+    padding: 2px 4px;
+  }
+  .sortable-item .drag-handle:active { cursor: grabbing; }
+  .sortable-item.dragging { opacity: .35; }
+  .sortable-item.drag-over { box-shadow: 0 -3px 0 0 var(--accent) inset; }
+  .section-hint { color: var(--dim); font-size: 12px; margin-bottom: 10px; }
+  .remove-btn {
+    align-self: flex-start;
+    background: none; border: none; color: var(--danger);
+    font-size: 12px; cursor: pointer; text-decoration: underline;
+  }
+  #add-work {
+    margin-top: 16px;
+    background: #ffffff14; border: none; color: var(--fg);
+    padding: 10px 16px; border-radius: 6px; cursor: pointer; font-size: 13px;
+  }
+  footer {
+    position: fixed;
+    inset: auto 0 0 0;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 20px;
+    background: var(--panel);
+    border-top: 1px solid #ffffff14;
+  }
+  #save {
+    background: var(--accent); border: none; color: #04101f;
+    font-weight: 600; padding: 10px 20px; border-radius: 6px;
+    cursor: pointer; font-size: 14px;
+  }
+  #save:disabled { opacity: .5; cursor: default; }
+  #reload {
+    background: none; border: 1px solid #ffffff2a; color: var(--fg);
+    padding: 10px 16px; border-radius: 6px; cursor: pointer; font-size: 13px;
+  }
+  #status { font-size: 13px; color: var(--dim); }
+  #status.ok { color: #6be08b; }
+  #status.err { color: var(--danger); }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Editor</h1>
+  <span class="warn">outil dev — jamais publié avec le site live</span>
+  <nav id="nav"></nav>
+</header>
+
+<main id="main"></main>
+
+<footer>
+  <button id="save">Enregistrer &amp; regénérer manifest.js</button>
+  <button id="reload">Recharger depuis le disque</button>
+  <span id="status"></span>
+</footer>
+
+<script>
+(() => {
+  const CATEGORIES = ["portfolio", "animations", "vfx", "ui"];
+  const TABS = [...CATEGORIES, "works"];
+  let mediaMeta = {}; // { cat: [{file, title, description}, ...] } — array order = display order
+  let works = [];     // [{title, description, url, thumbnail}] — array order = display order
+
+  const nav = document.getElementById("nav");
+  const main = document.getElementById("main");
+  const statusEl = document.getElementById("status");
+
+  function setStatus(text, kind) {
+    statusEl.textContent = text;
+    statusEl.className = kind || "";
+  }
+
+  async function loadAll() {
+    setStatus("Chargement…");
+    // GET /api/media reconciles against img/* on the server first, so this
+    // always reflects files just added/removed outside the editor too
+    const [mediaRes, worksRes] = await Promise.all([fetch("/api/media"), fetch("/api/works")]);
+    mediaMeta = await mediaRes.json();
+    works = await worksRes.json();
+    for (const cat of CATEGORIES) if (!Array.isArray(mediaMeta[cat])) mediaMeta[cat] = [];
+    render();
+    setStatus("");
+  }
+
+  /* shared drag-and-drop reordering for both the media tabs and Works —
+     one uniform way to reorder content everywhere on the site */
+  function attachDragReorder(item, list, i, rerender) {
+    item.draggable = true;
+    item.addEventListener("dragstart", e => {
+      item.classList.add("dragging");
+      e.dataTransfer.effectAllowed = "move";
+      e.dataTransfer.setData("text/plain", String(i));
+    });
+    item.addEventListener("dragend", () => item.classList.remove("dragging"));
+    item.addEventListener("dragover", e => {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = "move";
+      item.classList.add("drag-over");
+    });
+    item.addEventListener("dragleave", () => item.classList.remove("drag-over"));
+    item.addEventListener("drop", e => {
+      e.preventDefault();
+      item.classList.remove("drag-over");
+      const from = Number(e.dataTransfer.getData("text/plain"));
+      if (Number.isNaN(from) || from === i) return;
+      const [moved] = list.splice(from, 1);
+      list.splice(i, 0, moved);
+      rerender();
+    });
+  }
+
+  function makeDragHandle() {
+    const handle = document.createElement("div");
+    handle.className = "drag-handle";
+    handle.textContent = "⠿";
+    return handle;
+  }
+
+  function render() {
+    nav.innerHTML = "";
+    for (const tab of TABS) {
+      const btn = document.createElement("button");
+      btn.textContent = tab;
+      btn.dataset.tab = tab;
+      btn.addEventListener("click", () => selectTab(tab));
+      nav.appendChild(btn);
+    }
+    main.innerHTML = "";
+    for (const cat of CATEGORIES) main.appendChild(renderMediaSection(cat));
+    main.appendChild(renderWorksSection());
+    selectTab(TABS[0]);
+  }
+
+  function selectTab(tab) {
+    nav.querySelectorAll("button").forEach(b => b.classList.toggle("active", b.dataset.tab === tab));
+    main.querySelectorAll(".section").forEach(s => s.classList.toggle("active", s.dataset.tab === tab));
+  }
+
+  function renderMediaSection(cat) {
+    const section = document.createElement("div");
+    section.className = "section";
+    section.dataset.tab = cat;
+
+    const hint = document.createElement("div");
+    hint.className = "section-hint";
+    hint.textContent = "Glisser-déposer les cartes (⠿) pour changer l'ordre d'affichage. " +
+      "Pour retirer un élément, supprime son fichier dans img/" + cat + " puis relance update.cmd (ou re-sauvegarde ici).";
+    section.appendChild(hint);
+
+    const grid = document.createElement("div");
+    grid.className = "items";
+    section.appendChild(grid);
+
+    const list = mediaMeta[cat];
+
+    function renderItems() {
+      grid.innerHTML = "";
+      list.forEach((entry, i) => {
+        const item = document.createElement("div");
+        item.className = "item sortable-item";
+        attachDragReorder(item, list, i, renderItems);
+        item.appendChild(makeDragHandle());
+
+        let preview;
+        if (/\.(mp4|mov)$/i.test(entry.file)) {
+          preview = document.createElement("video");
+          preview.src = `img/${cat}/${entry.file}`;
+          preview.muted = true;
+          preview.controls = true;
+          preview.preload = "metadata";
+        } else {
+          preview = document.createElement("img");
+          preview.src = `img/${cat}/${entry.file}`;
+          preview.loading = "lazy";
+        }
+        preview.className = "preview";
+        item.appendChild(preview);
+
+        const name = document.createElement("div");
+        name.className = "filename";
+        name.textContent = entry.file;
+        item.appendChild(name);
+
+        item.appendChild(makeField("Titre", entry.title, v => { entry.title = v; }));
+        item.appendChild(makeField("Description", entry.description, v => { entry.description = v; }, true));
+
+        grid.appendChild(item);
+      });
+    }
+    renderItems();
+    return section;
+  }
+
+  function makeField(labelText, value, onInput, multiline) {
+    const wrap = document.createElement("div");
+    const label = document.createElement("label");
+    label.textContent = labelText;
+    const field = document.createElement(multiline ? "textarea" : "input");
+    field.value = value || "";
+    field.addEventListener("input", () => onInput(field.value));
+    wrap.append(label, field);
+    return wrap;
+  }
+
+  function renderWorksSection() {
+    const section = document.createElement("div");
+    section.className = "section";
+    section.dataset.tab = "works";
+
+    const hint = document.createElement("div");
+    hint.className = "section-hint";
+    hint.textContent = "Glisser-déposer les cartes (⠿) pour changer l'ordre d'affichage.";
+    section.appendChild(hint);
+
+    const grid = document.createElement("div");
+    grid.className = "items";
+    section.appendChild(grid);
+
+    function renderWorkItems() {
+      grid.innerHTML = "";
+      works.forEach((work, i) => {
+        const item = document.createElement("div");
+        item.className = "item sortable-item";
+        attachDragReorder(item, works, i, renderWorkItems);
+        item.appendChild(makeDragHandle());
+
+        const preview = document.createElement("img");
+        preview.className = "preview";
+        preview.src = work.thumbnail || youtubeThumb(work.url) || "";
+        item.appendChild(preview);
+
+        item.appendChild(makeField("Titre", work.title, v => { work.title = v; }));
+        item.appendChild(makeField("Description", work.description, v => { work.description = v; }, true));
+        item.appendChild(makeField("URL", work.url, v => { work.url = v; preview.src = work.thumbnail || youtubeThumb(v) || ""; }));
+        item.appendChild(makeField("Thumbnail (optionnel)", work.thumbnail, v => { work.thumbnail = v; preview.src = v || youtubeThumb(work.url) || ""; }));
+
+        const removeBtn = document.createElement("button");
+        removeBtn.className = "remove-btn";
+        removeBtn.textContent = "Supprimer";
+        removeBtn.addEventListener("click", () => { works.splice(i, 1); renderWorkItems(); });
+        item.appendChild(removeBtn);
+
+        grid.appendChild(item);
+      });
+    }
+    renderWorkItems();
+
+    const addBtn = document.createElement("button");
+    addBtn.id = "add-work";
+    addBtn.textContent = "+ Ajouter un lien";
+    addBtn.addEventListener("click", () => {
+      works.push({ title: "", description: "", url: "", thumbnail: "" });
+      renderWorkItems();
+    });
+    section.appendChild(addBtn);
+    return section;
+  }
+
+  function youtubeThumb(url) {
+    if (!url) return null;
+    const m = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|shorts\/|embed\/))([\w-]{11})/);
+    return m ? `https://img.youtube.com/vi/${m[1]}/hqdefault.jpg` : null;
+  }
+
+  document.getElementById("save").addEventListener("click", async () => {
+    setStatus("Enregistrement…");
+    try {
+      const [mediaRes, worksRes] = await Promise.all([
+        fetch("/api/media", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(mediaMeta) }),
+        fetch("/api/works", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(works) })
+      ]);
+      if (!mediaRes.ok || !worksRes.ok) throw new Error("save failed");
+      const [mediaOut, worksOut] = await Promise.all([mediaRes.json(), worksRes.json()]);
+      setStatus(mediaOut.baked && worksOut.baked ? "Enregistré, manifest.js régénéré." : "Enregistré (bake manuel requis).", "ok");
+    } catch (e) {
+      setStatus("Échec de l'enregistrement : " + e.message, "err");
+    }
+  });
+
+  document.getElementById("reload").addEventListener("click", loadAll);
+
+  loadAll();
+})();
+</script>
+</body>
+</html>
