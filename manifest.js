@@ -29,10 +29,10 @@ window.WORKS = [
     "thumbnail": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/3312130/3c208616d9fec4de289624979dad00779e8f7ecd/ss_3c208616d9fec4de289624979dad00779e8f7ecd.1920x1080.jpg?t=1784291164"
   },
   {
-    "title": "Art Direction & UI/UX - JoinEnder ",
-    "description": "Models, Textures, GUIs. The entire project has since changed directions entirely and was rebranded. ",
-    "url": "https://www.playsca.pe/?utm_source=joinender&utm_medium=redirect&utm_campaign=rebrand",
-    "thumbnail": "https://media.licdn.com/dms/image/v2/C4D0BAQGyNC_F6Wgjrg/company-logo_200_200/company-logo_200_200/0/1630479664168/joinender_logo?e=2147483647&v=beta&t=3Guuj9_5Uk0JjE29Zw4uN1OcIH6yrTMYaDGidUUitOc"
+    "title": "Lead Artist and Tech anim - Lunar Client",
+    "description": "Formerly lead artist at Lunar.\nI made the first pets and helped design their animation system using GeckoLib",
+    "url": "https://www.youtube.com/watch?v=xLZctIY75bY",
+    "thumbnail": ""
   },
   {
     "title": "Skull Island - ForrestBono",
@@ -41,10 +41,28 @@ window.WORKS = [
     "thumbnail": ""
   },
   {
-    "title": "Playing as an Axolotl",
+    "title": "Buff Axolotl - Fru",
     "description": "Buff Axolotl model. One of the many videos I've worked on for various youtube channels",
     "url": "https://www.youtube.com/watch?v=W9TjdDBt0AM",
     "thumbnail": ""
+  },
+  {
+    "title": "Team MrBeast - Undisclosed Project",
+    "description": "Models for an undisclosed project that was later cancelled. Hey, I thought that was still worth mentioning. ",
+    "url": "",
+    "thumbnail": "https://yt3.googleusercontent.com/ytc/AIdro_lMiSL6eHqg2dVxvll6mVMeXo1qVak4TZ4_7mEWdobRRCk=s900-c-k-c0x00ffffff-no-rj"
+  },
+  {
+    "title": "Art Direction & UI/UX - JoinEnder ",
+    "description": "Models, Textures, GUIs. The entire project has since changed directions entirely and was rebranded. ",
+    "url": "https://www.playsca.pe/?utm_source=joinender&utm_medium=redirect&utm_campaign=rebrand",
+    "thumbnail": "https://media.licdn.com/dms/image/v2/C4D0BAQGyNC_F6Wgjrg/company-logo_200_200/company-logo_200_200/0/1630479664168/joinender_logo?e=2147483647&v=beta&t=3Guuj9_5Uk0JjE29Zw4uN1OcIH6yrTMYaDGidUUitOc"
+  },
+  {
+    "title": "Lead Artist - Chasecraft",
+    "description": "A lot of content was created for this now closed server. It was a good run though!",
+    "url": "https://x.com/PlayChasecraft",
+    "thumbnail": "https://pbs.twimg.com/profile_banners/1026487632761692160/1629032463/1500x500"
   }
 ];
 window.MEDIA_META = {
