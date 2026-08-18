@@ -178,15 +178,18 @@
   }
 
   /* shared drag-and-drop reordering for both the media tabs and Works —
-     one uniform way to reorder content everywhere on the site */
-  function attachDragReorder(item, list, i, rerender) {
-    item.draggable = true;
-    item.addEventListener("dragstart", e => {
+     one uniform way to reorder content everywhere on the site.
+     Only the ⠿ handle is draggable, not the whole card: making the whole
+     .item draggable made Chrome hijack mousedown+drag inside <input>/<textarea>
+     as an element drag instead of a text selection, breaking editing. */
+  function attachDragReorder(item, handle, list, i, rerender) {
+    handle.draggable = true;
+    handle.addEventListener("dragstart", e => {
       item.classList.add("dragging");
       e.dataTransfer.effectAllowed = "move";
       e.dataTransfer.setData("text/plain", String(i));
     });
-    item.addEventListener("dragend", () => item.classList.remove("dragging"));
+    handle.addEventListener("dragend", () => item.classList.remove("dragging"));
     item.addEventListener("dragover", e => {
       e.preventDefault();
       e.dataTransfer.dropEffect = "move";
@@ -253,8 +256,9 @@
       list.forEach((entry, i) => {
         const item = document.createElement("div");
         item.className = "item sortable-item";
-        attachDragReorder(item, list, i, renderItems);
-        item.appendChild(makeDragHandle());
+        const handle = makeDragHandle();
+        attachDragReorder(item, handle, list, i, renderItems);
+        item.appendChild(handle);
 
         let preview;
         if (/\.(mp4|mov)$/i.test(entry.file)) {
@@ -316,8 +320,9 @@
       works.forEach((work, i) => {
         const item = document.createElement("div");
         item.className = "item sortable-item";
-        attachDragReorder(item, works, i, renderWorkItems);
-        item.appendChild(makeDragHandle());
+        const handle = makeDragHandle();
+        attachDragReorder(item, handle, works, i, renderWorkItems);
+        item.appendChild(handle);
 
         const preview = document.createElement("img");
         preview.className = "preview";
